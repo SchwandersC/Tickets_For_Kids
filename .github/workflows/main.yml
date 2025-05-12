@@ -8,17 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo (optional if you don't use repo files)
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker image
-        run: docker build -t ruffian-job .
-
-      - name: Run the container and generate CSV
-        run: docker run --rm -v ${{ github.workspace }}/output:/app/static ruffian-job
+      - name: Run prebuilt Docker image and generate CSV
+        run: docker run --rm -v ${{ github.workspace }}/output:/app/static schwandersc/baseball_schedule:latest
 
       - name: Upload CSV as artifact
         uses: actions/upload-artifact@v4
