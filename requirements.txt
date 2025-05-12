@@ -1,0 +1,6 @@
+pandas
+python-dotenv
+openai
+backoff
+selenium
+beautifulsoup4
