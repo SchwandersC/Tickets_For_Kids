@@ -1,0 +1,27 @@
+name: Run Yearly Scraper
+
+on:
+  workflow_dispatch:  # Manual trigger via GitHub UI
+
+jobs:
+  run-docker-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: docker build -t ruffian-job .
+
+      - name: Run the container and generate CSV
+        run: docker run --rm -v ${{ github.workspace }}/output:/app/static ruffian-job
+
+      - name: Upload CSV as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: final-csv
+          path: output/final_draft.csv
