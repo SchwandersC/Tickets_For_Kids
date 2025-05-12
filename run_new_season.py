@@ -9,7 +9,7 @@ def main():
     combined_df = join_schedule_with_venues(schedule_df)
     description_df = generate_descriptions(combined_df)
     final_df = finalize_game_info_df(description_df)
-    final_df.to_csv("/app/final_draft.csv", encoding="utf-8-sig", index=False)
+    final_df.to_csv("/app/static/final_draft.csv", encoding="utf-8-sig", index=False)
 
 if __name__ == "__main__":
     main()
