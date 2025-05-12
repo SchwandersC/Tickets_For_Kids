@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
@@ -21,7 +21,8 @@ jobs:
         run: docker run --rm -v ${{ github.workspace }}/output:/app/static ruffian-job
 
       - name: Upload CSV as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: final-csv
           path: output/final_draft.csv
+
