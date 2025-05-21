@@ -1,0 +1,22 @@
+name: Scrape NBA Schedule
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scrape-nba:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run NBA scraper
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/output/nba:/app/static \
+            schwandersc/schedules:latest nba
+
+      - name: Upload NBA schedule
+        uses: actions/upload-artifact@v4
+        with:
+          name: nba-schedule
+          path: output/nba/

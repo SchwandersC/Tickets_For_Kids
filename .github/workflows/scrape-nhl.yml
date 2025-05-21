@@ -1,0 +1,22 @@
+name: Scrape NHL Schedule
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scrape-nhl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run NHL scraper
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/output/nhl:/app/static \
+            schwandersc/schedules:latest nhl
+
+      - name: Upload NHL schedule
+        uses: actions/upload-artifact@v4
+        with:
+          name: nhl-schedule
+          path: output/nhl/
