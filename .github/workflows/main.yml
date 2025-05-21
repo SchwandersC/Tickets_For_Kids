@@ -1,22 +1,78 @@
-name: Run Yearly Scraper
+name: Run League Scrapers
 
 on:
-  workflow_dispatch:  # Manual trigger via GitHub UI
+  workflow_dispatch:
 
 jobs:
-  run-docker-job:
+
+  scrape-nba:
+    name: Scrape NBA
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo (optional if you don't use repo files)
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Run prebuilt Docker image and generate CSV
-        run: docker run --rm -v ${{ github.workspace }}/output:/app/static schwandersc/baseball_schedule:latest
+      - name: Run NBA scraper
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/output/nba:/app/static \
+            schwandersc/schedules:latest nba
 
-      - name: Upload CSV as artifact
+      - name: Upload NBA schedule
         uses: actions/upload-artifact@v4
         with:
-          name: final-csv
-          path: output/final_draft.csv
+          name: nba-schedule
+          path: output/nba/
 
+  scrape-mlb:
+    name: Scrape MLB
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run MLB scraper
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/output/mlb:/app/static \
+            schwandersc/schedules:latest mlb
+
+      - name: Upload MLB schedule
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlb-schedule
+          path: output/mlb/
+
+  scrape-wnba:
+    name: Scrape WNBA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run WNBA scraper
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/output/wnba:/app/static \
+            schwandersc/schedules:latest wnba
+
+      - name: Upload WNBA schedule
+        uses: actions/upload-artifact@v4
+        with:
+          name: wnba-schedule
+          path: output/wnba/
+
+  scrape-nhl:
+    name: Scrape NHL
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run NHL scraper
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/output/nhl:/app/static \
+            schwandersc/schedules:latest nhl
+
+      - name: Upload NHL schedule
+        uses: actions/upload-artifact@v4
+        with:
+          name: nhl-schedule
+          path: output/nhl/

@@ -8,6 +8,40 @@ from bs4 import BeautifulSoup
 import logging
 from dotenv import load_dotenv
 
+CHROME_BINARY = "/usr/bin/chromium-browser"
+CHROMEDRIVER_PATH = "/usr/bin/chromedriver"
+SELENIUM_REMOTE_URL = "http://localhost:4444/wd/hub"
+
+def init_driver(mode=None):
+    """
+    Initialize Selenium Chrome WebDriver based on environment.
+
+    mode: 'docker', 'local', or None for auto-detect.
+    """
+
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    # Auto-detect if no mode is specified
+    if mode is None:
+        in_docker = os.path.exists("/.dockerenv") or os.getenv("IN_DOCKER") == "1"
+        mode = "docker" if in_docker else "local"
+
+    if mode == "docker":
+        print("🔧 Using remote Selenium driver (Docker mode)")
+        return webdriver.Remote(
+            command_executor=SELENIUM_REMOTE_URL,
+            options=options
+        )
+    elif mode == "local":
+        print("🔧 Using local ChromeDriver (Local mode)")
+        options.binary_location = CHROME_BINARY
+        return webdriver.Chrome(service=Service(CHROMEDRIVER_PATH), options=options)
+    else:
+        raise ValueError(f"Unknown mode '{mode}': must be 'docker', 'local', or None")
+
 def scrape_team_schedules(max_retries=5):
     print("Starting team schedules scraping.")
 
@@ -19,19 +53,8 @@ def scrape_team_schedules(max_retries=5):
         "yankees", "athletics", "phillies", "pirates", "padres", "giants",
         "mariners", "cardinals", "rays", "rangers", "bluejays", "nationals"
     ]
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
 
-    # Optionally, specify the binary location for Chromium if needed:
-    # options.binary_location = '/usr/bin/chromium'
-
-    # Instead of using a local chromedriver binary, connect to the Selenium server.
-    driver = webdriver.Remote(
-        command_executor="http://localhost:4444/wd/hub",
-        options=options
-    )
+    driver = init_driver()
     game_data = []
 
     # Loop over each team code and scrape the schedule

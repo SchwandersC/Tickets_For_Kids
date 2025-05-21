@@ -27,5 +27,8 @@ COPY . /app
 # Expose the port that your app will use (adjust if needed).
 EXPOSE 5000
 
-# Set the default command to run your script.
-CMD ["/app/start.sh"]
+# Make sure the script is executable
+RUN chmod +x /app/start.sh
+
+# Set the script as the entrypoint
+ENTRYPOINT ["/app/start.sh"]

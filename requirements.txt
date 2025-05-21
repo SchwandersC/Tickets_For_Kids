@@ -1,6 +1,10 @@
+backoff
+beautifulsoup4
+openai
+openpyxl
 pandas
 python-dotenv
-openai
-backoff
+python_dateutil
+pytz
 selenium
-beautifulsoup4
+tzlocal
